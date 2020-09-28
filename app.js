@@ -1,10 +1,11 @@
-var linkApi = 'http://192.168.1.75:4321';
+var linkApi = 'http://127.0.0.1:4321';
 
 // begin chart
 var lbl = [];
 var dados15 = [];
 var dados45 = [];
 var dados70 = [];
+var atual = [];
 var lineChartData = {
   labels: lbl,
   datasets: [
@@ -32,6 +33,14 @@ var lineChartData = {
       data: [],
       //   yAxisID: 'y2',
     },
+    {
+        label: 'Valor Atual',
+        borderColor: '#3474eb',
+        backgroundColor: '#3474eb',
+        fill: false,
+        data: [],
+        //   yAxisID: 'y2',
+      },    
   ],
 };
 
@@ -133,7 +142,7 @@ function toolTipCompra(acao, pa, al) {
   return text;
 }
 
-function clickmme(value) {
+function clickmme(value, vlatual) {
   jQuery.get(linkApi + '/mediamovel/' + value, function (data) {
     var obj = JSON.parse(JSON.parse(data));
 
@@ -143,6 +152,7 @@ function clickmme(value) {
       dados15 = [];
       dados45 = [];
       dados70 = [];
+      atual = [];
       for (m = 0; m <= size; m++) {
         console.log(obj[m]);
         if (obj[m]) {
@@ -150,6 +160,7 @@ function clickmme(value) {
           dados15.push(obj[m].mme15);
           dados45.push(obj[m].mme45);
           dados70.push(obj[m].mme70);
+          atual.push(vlatual);
         }
         if (m == size) {
           lbl = lbl.reverse();
@@ -161,6 +172,7 @@ function clickmme(value) {
           lineChartData.datasets[0].data = dados15;
           lineChartData.datasets[1].data = dados45;
           lineChartData.datasets[2].data = dados70;
+          lineChartData.datasets[3].data = atual;
           window.myLine.update();
 
           $('#modalMMe').modal();
@@ -177,6 +189,7 @@ function checkContent(value) {
 
 function updateValues() {
   jQuery.get(linkApi + '/cotacoes', function (data) {
+      console.log(data)
     var obj = JSON.parse(JSON.parse(data));
 
     var size = Object.values(obj).length;
@@ -248,7 +261,7 @@ function updateValues() {
                     <td class="text-center"><i class=" ${icon_venda} fa fa-circle" aria-hidden="true" data-toggle="tooltip" title="${info_venda}"></i></td>
                     <td class="text-center" onclick='clickmme("${
                       obj[m].empresa
-                    }");'><i class="fa ${iconmme} ${classmme}"  data-toggle="tooltip" title='${txtmme}'></i> </td>                 
+                    }", ${obj[m].vl_atual});'><i class="fa ${iconmme} ${classmme}"  data-toggle="tooltip" title='${txtmme}'></i> </td>                 
                     <td>${nullZero(obj[m].fxmin45 || 0, true)}</td>
                     <td>${nullZero(obj[m].fxmax45 || 0, true)}</td>
                     <td>${nullZero(obj[m].fxminrg || 0, true)}</td>                    
