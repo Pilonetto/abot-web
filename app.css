@@ -1,14 +1,21 @@
 .profit_red {
-    color: #ff8566
+  color: #ff8566;
 }
 
 .profit_blue {
-    color:  #00e600
-
+  color: #00e600;
 }
 .color_white {
-    color: white;
+  color: white;
 }
 .color_blue {
-    color: #3385ff;
+  color: #3385ff;
+}
+
+.modal_mm2 {
+  max-width: 80% !important;
+}
+
+.cursor_hand {
+  cursor: pointer;
 }
