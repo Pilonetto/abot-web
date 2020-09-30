@@ -34,13 +34,13 @@ var lineChartData = {
       //   yAxisID: 'y2',
     },
     {
-        label: 'Valor Atual',
-        borderColor: '#3474eb',
-        backgroundColor: '#3474eb',
-        fill: false,
-        data: [],
-        //   yAxisID: 'y2',
-      },    
+      label: 'Valor Atual',
+      borderColor: '#3474eb',
+      backgroundColor: '#3474eb',
+      fill: false,
+      data: [],
+      //   yAxisID: 'y2',
+    },
   ],
 };
 
@@ -142,6 +142,32 @@ function toolTipCompra(acao, pa, al) {
   return text;
 }
 
+function addativo() {
+  let ativo = $('#nomeativo').val();
+  if (ativo != '') {
+    jQuery.get(linkApi + '/addativo/' + ativo, function (data) {
+      $('#modaladdAtivo').modal('hide');
+    });
+  }
+}
+
+function clickqtde(value) {
+  $('#nomeativo2').val(value);
+  $('#modaladdQtde').modal('show');
+}
+function addqtde() {
+  console.log('asjkdhjask');
+  let ativo = $('#nomeativo2').val();
+  let qtde = $('#addqt').val();
+  let valor = $('#addvl').val();
+  if (ativo != '') {
+    console.log(`${linkApi} /addqtde/${ativo}/${qtde}/${valor}`);
+    jQuery.get(`${linkApi}/addqtde/${ativo}/${qtde}/${valor}`, function (data) {
+      $('#modaladdQtde').modal('hide');
+    });
+  }
+}
+
 function clickmme(value, vlatual) {
   jQuery.get(linkApi + '/mediamovel/' + value, function (data) {
     var obj = JSON.parse(JSON.parse(data));
@@ -175,6 +201,11 @@ function clickmme(value, vlatual) {
           lineChartData.datasets[3].data = atual;
           window.myLine.update();
 
+          $('#empmodal').html(
+            `Análise da média móvel <strong>${value}</strong> - Cotação atual: <strong>R$ ${vlatual.toLocaleString(
+              'pt-BR'
+            )}</strong>`
+          );
           $('#modalMMe').modal();
         }
       }
@@ -189,7 +220,6 @@ function checkContent(value) {
 
 function updateValues() {
   jQuery.get(linkApi + '/cotacoes', function (data) {
-      console.log(data)
     var obj = JSON.parse(JSON.parse(data));
 
     var size = Object.values(obj).length;
@@ -227,23 +257,36 @@ function updateValues() {
 
           let txtmme = 'Média móvel mostra um padrão neutro!';
           let classmme = 'color_white';
-
+          //fa-angle-up
           let iconmme = 'color_white';
+
+          if (obj[m].stsmme == -1) {
+            txtmme = 'Fraca tendencia de queda - ' + obj[m].obsmme;
+            classmme = 'color_queda_1';
+            iconmme = 'fa-chevron-down';
+          }
+          if (obj[m].stsmme == -2) {
+            txtmme = 'Forte tendencia de queda - ' + obj[m].obsmme;
+            classmme = 'color_queda_2';
+            iconmme = 'fa-chevron-down';
+          }
+
           if (obj[m].stsmme == 0) {
-            txtmme = 'Média móvel mostra um padrão de queda!';
-            classmme = 'profit_red';
-            iconmme = 'fa-arrow-circle-down';
+            txtmme = 'Sem padrão detectado! - ' + obj[m].obsmme;
+            classmme = 'color_white';
+            iconmme = 'fa-arrows-h';
           }
           if (obj[m].stsmme == 1) {
-            txtmme = 'Média móvel mostra um padrão neutro!';
-            classmme = 'color_white';
-            iconmme = 'fa-arrow-circle-right';
+            txtmme = 'Fraca tendencia de alta - ' + obj[m].obsmme;
+            classmme = 'color_alta_1';
+            iconmme = 'fa-chevron-up';
           }
           if (obj[m].stsmme == 2) {
-            txtmme = 'Média móvel mostra um padrão de alta!';
-            classmme = 'profit_blue';
-            iconmme = 'fa-arrow-circle-up';
+            txtmme = 'Forte tendencia de alta - ' + obj[m].obsmme;
+            classmme = 'color_alta_2';
+            iconmme = 'fa-chevron-up';
           }
+
           //let tooltipalcompra = toolTipCompra(obj[m].empresa, obj[m].vl_atual, obj[m].al_comprar);
 
           total_profit = 0;
@@ -251,17 +294,22 @@ function updateValues() {
             total_profit = obj[m].profit * obj[m].qtde;
           }
           profit_row = checkContent(nullZero(obj[m].profit || 0, true) + ' / ' + nullZero(total_profit || 0, true));
+
+          let class_emp = '';
+          if (obj[m].bloqueada) {
+            class_emp = 'color_bloq';
+          }
           itens += `<tr>
-                    <th>${obj[m].empresa}</th>
-                    <td>${nullZero(obj[m].qtde, false)}</td>
+                    <th class="${class_emp}">${obj[m].empresa}</th>
+                    <td onclick='clickqtde("${obj[m].empresa}");'>${nullZero(obj[m].qtde, false)}</td>
                     <td>${nullZero(obj[m].vl_pago, true)}</td>
                     <td>${nullZero(obj[m].vl_atual, true)}</td>
                     <td class= ${class_profit}>${profit_row} </td>
                     <td class="text-center"><i class=" ${icon_compra} fa fa-circle" aria-hidden="true" data-toggle="tooltip" title='${info_compra}'></i></td>
                     <td class="text-center"><i class=" ${icon_venda} fa fa-circle" aria-hidden="true" data-toggle="tooltip" title="${info_venda}"></i></td>
-                    <td class="text-center" onclick='clickmme("${
-                      obj[m].empresa
-                    }", ${obj[m].vl_atual});'><i class="fa ${iconmme} ${classmme}"  data-toggle="tooltip" title='${txtmme}'></i> </td>                 
+                    <td class="text-center" onclick='clickmme("${obj[m].empresa}", ${
+            obj[m].vl_atual
+          });'><i class="fa ${iconmme} ${classmme}"  data-toggle="tooltip" title='${txtmme}'></i> </td>                 
                     <td>${nullZero(obj[m].fxmin45 || 0, true)}</td>
                     <td>${nullZero(obj[m].fxmax45 || 0, true)}</td>
                     <td>${nullZero(obj[m].fxminrg || 0, true)}</td>                    

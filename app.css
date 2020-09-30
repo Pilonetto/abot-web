@@ -11,6 +11,22 @@
 .color_blue {
   color: #3385ff;
 }
+.color_alta_1 {
+  color: #6ffc03;
+}
+.color_alta_2 {
+  color: #1a961a;
+}
+.color_bloq {
+  color: #8c8c89;
+}
+
+.color_queda_1 {
+  color: #e34a40;
+}
+.color_queda_2 {
+  color: #fa0f00;
+}
 
 .modal_mm2 {
   max-width: 80% !important;
