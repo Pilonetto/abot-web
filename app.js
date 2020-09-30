@@ -288,7 +288,12 @@ function updateValues() {
           }
 
           //let tooltipalcompra = toolTipCompra(obj[m].empresa, obj[m].vl_atual, obj[m].al_comprar);
+          let txt_vl = 
+          `Abertura:${obj[m].aberturadia.toFixed(2)}
+Máxima:${obj[m].aberturadia.toFixed(2)}
+Minima:${obj[m].aberturadia.toFixed(2)}`
 
+        
           total_profit = 0;
           if (obj[m].qtde > 0) {
             total_profit = obj[m].profit * obj[m].qtde;
@@ -296,14 +301,19 @@ function updateValues() {
           profit_row = checkContent(nullZero(obj[m].profit || 0, true) + ' / ' + nullZero(total_profit || 0, true));
 
           let class_emp = '';
+          let icon_lock = '';
           if (obj[m].bloqueada) {
             class_emp = 'color_bloq';
+            class_profit = 'color_bloq';
+            icon_venda = 'color_bloq';
+            classmme = 'color_bloq';
+            icon_lock = '<i class="fa fa-lock color_bloq" style="padding-rigth:3px;" aria-hidden="true"></i>'
           }
           itens += `<tr>
-                    <th class="${class_emp}">${obj[m].empresa}</th>
-                    <td onclick='clickqtde("${obj[m].empresa}");'>${nullZero(obj[m].qtde, false)}</td>
-                    <td>${nullZero(obj[m].vl_pago, true)}</td>
-                    <td>${nullZero(obj[m].vl_atual, true)}</td>
+                    <th class="${class_emp}">${icon_lock} ${obj[m].empresa}</th>
+                    <td class="${class_emp}"onclick='clickqtde("${obj[m].empresa}");'>${nullZero(obj[m].qtde, false)}</td>
+                    <td class="${class_emp}">${nullZero(obj[m].vl_pago, true)}</td>
+                    <td class="${class_emp}" data-toggle="tooltip" data-html="false" title="${txt_vl}">${nullZero(obj[m].vl_atual, true)}</td>
                     <td class= ${class_profit}>${profit_row} </td>
                     <td class="text-center"><i class=" ${icon_compra} fa fa-circle" aria-hidden="true" data-toggle="tooltip" title='${info_compra}'></i></td>
                     <td class="text-center"><i class=" ${icon_venda} fa fa-circle" aria-hidden="true" data-toggle="tooltip" title="${info_venda}"></i></td>
@@ -355,6 +365,7 @@ function updateValues() {
 }
 
 $(document).ready(function () {
+//    $("body").tooltip({ selector: '[data-toggle=tooltip]' });
   updateValues();
 });
 
