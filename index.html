@@ -59,14 +59,14 @@
                 <th>Preço Atual</th>
                 <th>Lucro / Prejuízo</th>
                 <th class="text-center">Al. Compra</th>
-                <th class="class=text-center">Al. Venda</th>
-                <th class="class=text-center cursor_hand">MME</th>
+                <th class="text-center">Al. Venda</th>
+                <th class="text-center cursor_hand">MME</th>
                 <!-- <th class="">MME 15</th>
                 <th class="">MME 30</th> -->
-                <th class="">Fch. Min 45</th>
-                <th class="">Fch. Max 45</th>
-                <th class="">Rng. Min 45</th>
-                <th class="">Rng. Max 45</th>
+                <th class="text-center">Atenção</th>
+                <th class="text-center">Análise</th>
+                <th class="text-center"> Excluir</th>
+                
               </tr>
             </thead>
             <tbody></tbody>
@@ -149,6 +149,33 @@
           <div class="modal-body">
             <div style="width: 100%">
               <canvas id="canvas"></canvas>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="modalanalise"
+      class="modal fade bd-example-modal-lg"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myLargeModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg modal_mm2">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="empmodalan" class="modal-title" id="exampleModalLongTitle"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div style="width: 100%">
+              <p id="analise"></p>
             </div>
           </div>
           <div class="modal-footer">

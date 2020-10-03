@@ -151,6 +151,12 @@ function addativo() {
   }
 }
 
+function deleteativo(value) {
+    jQuery.get(linkApi + '/delete/' + value, function (data) {
+      update();
+    });
+}
+
 function clickqtde(value) {
   $('#nomeativo2').val(value);
   $('#modaladdQtde').modal('show');
@@ -167,7 +173,20 @@ function addqtde() {
     });
   }
 }
+function clickan(value){
+  jQuery.get(linkApi + '/analise/' + value, function (data) {
+    var obj = JSON.parse(data);
+    console.log(obj);
+    $('#empmodalan').html(
+      `Análise das tendências de <strong>${value}</strong>`
+    );
+    $('#analise').html(
+      obj.test
+    );    
+    $('#modalanalise').modal();    
 
+  });
+}
 function clickmme(value, vlatual) {
   jQuery.get(linkApi + '/mediamovel/' + value, function (data) {
     var obj = JSON.parse(JSON.parse(data));
@@ -213,9 +232,12 @@ function clickmme(value, vlatual) {
   });
 }
 
-function checkContent(value) {
+function checkContent(value,vlpago, vlatual) {
   if (value == ' / ') return '';
-  else return value;
+  else {
+    let varr = Number(100 - ((vlatual * 100 ) / vlpago)).toFixed(2)
+    return value + ' (' + varr +'%)';
+  }
 }
 
 function updateValues() {
@@ -290,15 +312,15 @@ function updateValues() {
           //let tooltipalcompra = toolTipCompra(obj[m].empresa, obj[m].vl_atual, obj[m].al_comprar);
           let txt_vl = 
           `Abertura:${obj[m].aberturadia.toFixed(2)}
-Máxima:${obj[m].aberturadia.toFixed(2)}
-Minima:${obj[m].aberturadia.toFixed(2)}`
+Máxima:${obj[m].maximadia.toFixed(2)}
+Minima:${obj[m].minimadia.toFixed(2)}`
 
         
           total_profit = 0;
           if (obj[m].qtde > 0) {
             total_profit = obj[m].profit * obj[m].qtde;
           }
-          profit_row = checkContent(nullZero(obj[m].profit || 0, true) + ' / ' + nullZero(total_profit || 0, true));
+          profit_row = checkContent(nullZero(obj[m].profit || 0, true) + ' / ' + nullZero(total_profit || 0, true), obj[m].vl_pago, obj[m].vl_atual);
 
           let class_emp = '';
           let icon_lock = '';
@@ -309,6 +331,18 @@ Minima:${obj[m].aberturadia.toFixed(2)}`
             classmme = 'color_bloq';
             icon_lock = '<i class="fa fa-lock color_bloq" style="padding-rigth:3px;" aria-hidden="true"></i>'
           }
+          let _stopicon = ``          
+          if (obj[m].stoploss){
+            _stopicon = `<i class=" color_queda_2 fa fa-sign-out" aria-hidden="true" data-toggle="tooltip" title="Stop Loss acionado">`  
+          }
+          if (obj[m].stopgainpart){
+            _stopicon = `<i class=" color_parcial fa fa-sign-out" aria-hidden="true" data-toggle="tooltip" title="Saída parcial, venda metade de suas ações e garanta uma operação sem prejuízos">`  
+          }
+          if (obj[m].stopgaintot){
+            _stopicon = `<i class=" color_alta_2 fa fa-sign-out" aria-hidden="true" data-toggle="tooltip" title="Saída Total, venda todas as suas ações.">`  
+          }          
+          console.log(obj[m])
+
           itens += `<tr>
                     <th class="${class_emp}">${icon_lock} ${obj[m].empresa}</th>
                     <td class="${class_emp}"onclick='clickqtde("${obj[m].empresa}");'>${nullZero(obj[m].qtde, false)}</td>
@@ -320,10 +354,9 @@ Minima:${obj[m].aberturadia.toFixed(2)}`
                     <td class="text-center" onclick='clickmme("${obj[m].empresa}", ${
             obj[m].vl_atual
           });'><i class="fa ${iconmme} ${classmme}"  data-toggle="tooltip" title='${txtmme}'></i> </td>                 
-                    <td>${nullZero(obj[m].fxmin45 || 0, true)}</td>
-                    <td>${nullZero(obj[m].fxmax45 || 0, true)}</td>
-                    <td>${nullZero(obj[m].fxminrg || 0, true)}</td>                    
-                    <td>${nullZero(obj[m].fxmaxrg || 0, true)}</td>
+                    <td class="text-center" >${_stopicon}</td>
+                    <td class="text-center" onclick='clickan("${obj[m].empresa}");' > <i class="fa fa-commenting" aria-hidden="true" data-toggle="tooltip" title='Clique aqui para ver minha análise sobre essa empresa'></i> </td>
+                    <td class="text-center" onclick='deleteativo("${obj[m].empresa}");'> <button type="button" class="btn btn-danger btn-sm">Excluir</button> </td>
                   </tr>`;
 
           //   itens += `<tr>
